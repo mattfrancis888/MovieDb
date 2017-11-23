@@ -9,10 +9,10 @@ import java.util.List;
 
 public class MoviesListPresenter {
 
-    private final List<String> movies = new ArrayList<>();
+    private List<String> movies = new ArrayList<>();
 
-    public void setData(String title){
-        movies.add(title);
+    public void setData(List list){
+        movies = list;
     }
 
     public void onBindAtPosition(InterfaceMoviesView interfaceMoviesView, int position){
