@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface InterfaceMainView {
     void setUpRecyclerView(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager, List dataList);
+    List setRecyclerViewSize();
 
 
 }
