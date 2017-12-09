@@ -7,4 +7,7 @@ package com.example.toshiba.moviedb.MoviesRecyclerView;
 public interface InterfaceMoviesView {
 
      void setTitle(String title);
+     void setPoster(String posterPath);
+     void setRating(String rating);
+     void setDescription(String description);
 }

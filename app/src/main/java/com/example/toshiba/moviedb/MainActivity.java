@@ -40,8 +40,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void moviesDataRetrieved(List movies) {
-        moviesListPresenter.setData(movies);
+    public void moviesDataRetrieved(List<String> movies, List<String> posters,
+                                    List<String> ratings, List<String> descriptions) {
+        moviesListPresenter.setData(movies, posters, ratings, descriptions);
 
         setUpRecyclerView(
                 (RecyclerView) findViewById(R.id.recyclerView),

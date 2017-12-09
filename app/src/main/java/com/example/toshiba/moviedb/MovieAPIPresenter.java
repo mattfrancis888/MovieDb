@@ -22,7 +22,7 @@ public class MovieAPIPresenter{
     Context context;
 
     public interface MovieAPIPresenterListener{
-        void moviesDataRetrieved(List movies);
+        void moviesDataRetrieved(List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
     }
 
     public MovieAPIPresenter(Context context, MovieAPIPresenterListener listener){
@@ -37,13 +37,23 @@ public class MovieAPIPresenter{
                 movieApiService.getSortBy(),  movieApiService.getPageCount()).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
-                List result = new ArrayList();
-                int size = 2 ;
+                List<String> titles = new ArrayList();
+                List<String> posters = new ArrayList();
+                List<String> ratings  = new ArrayList();
+                List<String> descriptions  = new ArrayList();
+                String imagePath = "http://image.tmdb.org/t/p/w500/";
+                POJOMovie body = response.body();
+                int size = 4 ;
+
                 for(int i = 0; i < size;i++){
-                    result.add(response.body().getResults().get(i).getTitle());
+                    titles.add(body.getResults().get(i).getTitle());
+                    posters.add(imagePath + body.getResults().get(i).getPosterPath());
+                    ratings.add(String.valueOf(body.getResults().get(i).getVoteAverage()));
+                    descriptions.add(body.getResults().get(i).getOverview());
                 }
 
-                listner.moviesDataRetrieved(result);
+
+                listner.moviesDataRetrieved(titles, posters, ratings, descriptions );
 
             }
 
