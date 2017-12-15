@@ -24,6 +24,14 @@ public class MoviesListPresenter {
 
     }
 
+    public void addData(List<String> titles, List<String> images, List<String> ratings, List<String> descriptions) {
+       this.titles.addAll(titles);
+        this.images.addAll(images);
+        this.ratings.addAll(ratings);
+        this.descriptions.addAll(descriptions);
+
+    }
+
     public void onBindAtPosition(InterfaceMoviesView interfaceMoviesView, int position) {
         interfaceMoviesView.setTitle(titles.get(position));
         interfaceMoviesView.setPoster(images.get(position));
