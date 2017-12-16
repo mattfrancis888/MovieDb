@@ -16,11 +16,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewSetUp,
-        MovieAPIPresenter.MovieAPIPresenterListener {
+        MoviesPresenter.MovieAPIPresenterListener {
 
     int pageCount = 1;
     MoviesListPresenter moviesListPresenter;
-    MovieAPIPresenter movieAPIPresenter;
+    MoviesPresenter moviesPresenter;
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     MoviesAdapter moviesAdapter;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         moviesListPresenter = new MoviesListPresenter();
-        movieAPIPresenter = new MovieAPIPresenter(this, this);
+        moviesPresenter = new MoviesPresenter(this, this);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         getRecyclerViewData();
@@ -45,23 +45,23 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void getRecyclerViewData() {
-        movieAPIPresenter.
+        moviesPresenter.
                 getMovies(pageCount);
     }
 
     @Override
-    public void moviesDataRetrieved(int pageCount, List<String> movies, List<String> posters,
+    public void moviesDataRetrieved(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
                                     List<String> ratings, List<String> descriptions) {
 
         if (pageCount == 1) {
-            moviesListPresenter.setData(movies, posters, ratings, descriptions);
+            moviesListPresenter.setData(movieIds, movies, posters, ratings, descriptions);
             setUpRecyclerView(
                     recyclerView,
                     new LinearLayoutManager(this)
             );
         } else {
             int lastItemSize = moviesListPresenter.getMoviesSize();
-            moviesListPresenter.addData(movies, posters, ratings, descriptions);
+            moviesListPresenter.addData(movieIds, movies, posters, ratings, descriptions);
             int newItemSize = moviesListPresenter.getMoviesSize();
             moviesAdapter.notifyItemRangeInserted(lastItemSize, newItemSize);
             progressDialog.dismiss();
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
                     Log.d("loveu", "gonna miss ya");
                     progressDialog = ProgressDialogUtil.showProgressDialog(MainActivity.this, "Loading...");
                     pageCount++;
-                    movieAPIPresenter.
+                    moviesPresenter.
                             getMovies(pageCount);
 
                 }

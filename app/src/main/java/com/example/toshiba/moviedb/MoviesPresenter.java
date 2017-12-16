@@ -17,18 +17,18 @@ import retrofit2.Response;
  * Created by TOSHIBA on 23/11/2017.
  */
 
-public class MovieAPIPresenter {
+public class MoviesPresenter {
     MovieAPIService movieApiService;
     MovieAPIPresenterListener listner;
     Context context;
 
 
     public interface MovieAPIPresenterListener{
-        void moviesDataRetrieved(int page, List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
+        void moviesDataRetrieved(int page, List<String> movieId, List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
         void moviesDataRetrievalFail();
     }
 
-    public MovieAPIPresenter(Context context, MovieAPIPresenterListener listener){
+    public MoviesPresenter(Context context, MovieAPIPresenterListener listener){
         this.context = context;
         this.movieApiService = new MovieAPIService();
         this.listner = listener;
@@ -42,34 +42,37 @@ public class MovieAPIPresenter {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
                 Log.d("loveu", "onResponse" + pageCount);
+                List<String> movieIds = new ArrayList<String>();
                 List<String> titles = new ArrayList();
                 List<String> posters = new ArrayList();
                 List<String> ratings  = new ArrayList();
                 List<String> descriptions  = new ArrayList();
-                String imagePath = "http://image.tmdb.org/t/p/w500/";
                 POJOMovie body = response.body();
                 if(pageCount <= body.getTotalPages()) {
                     int size = body.getResults().size();
 
                     for (int i = 0; i < size; i++) {
+                        movieIds.add(body.getResults().get(i).getId().toString());
                         titles.add(body.getResults().get(i).getTitle());
-                        posters.add(imagePath + body.getResults().get(i).getPosterPath());
+                        posters.add(movieApiService.getStartingImagePath() + body.getResults().get(i).getPosterPath());
                         ratings.add(String.valueOf(body.getResults().get(i).getVoteAverage()));
                         descriptions.add(body.getResults().get(i).getOverview());
                     }
 
-                    listner.moviesDataRetrieved(pageCount, titles, posters, ratings, descriptions);
+                    listner.moviesDataRetrieved(pageCount, movieIds, titles, posters, ratings, descriptions);
 
                 } else {
                     //will be empty
-                    listner.moviesDataRetrieved(pageCount, titles, posters, ratings, descriptions);
+                    listner.moviesDataRetrieved(pageCount, movieIds, titles, posters, ratings, descriptions);
                 }
             }
 
             @Override
             public void onFailure(Call<POJOMovie> call, Throwable t) {
+                listner.moviesDataRetrievalFail();
                 Log.d("blue", "fail ya");
             }
         });
     }
+
 }
