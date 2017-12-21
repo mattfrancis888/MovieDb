@@ -65,17 +65,18 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
         tvCast2 = (TextView) findViewById(R.id.tvCast2);
         tvCast3 = (TextView) findViewById(R.id.tvCast3);
     }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_info);
         progressDialog = ProgressDialogUtil.showProgressDialog(this, "Loading...");
 
+        initViews();
 
         MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this, this);
 //        movieInfoPresenter.getMovieInfo("346364");
         movieInfoPresenter.getMovieInfo(getIntent().getStringExtra("MOVIE_ID"));
+
 
     }
 
@@ -85,14 +86,16 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
     public void moviesInfoRetrieved(String poster, String title, String description,
                                     String releaseDate, String status, String runTime,
                                     String revenue, List<String> genres, List<String> castPictures, List<String> castNames) {
-
-        initViews();
+        Log.d("blue", "moviesInfoRetrieved " + title);
+//        initViews();
         progressDialog.dismiss();
 
         tvTitle.setText(title);
         tvOverview.setText(description);
         tvReleaseDate.setText(releaseDate);
+
         tvGenres.setText(android.text.TextUtils.join(", ", genres));
+
         Glide.with(this).load(poster).into(ivPoster);
 
 
@@ -100,6 +103,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
         tvRunTime.setText(runTime);
         tvRevenue.setText(revenue);
 
+        Log.d("blue", castPictures.get(0));
         Glide.with(this).load(castPictures.get(0)).into(ivCast1);
         Glide.with(this).load(castPictures.get(1)).into(ivCast2);
         Glide.with(this).load(castPictures.get(2)).into(ivCast3);

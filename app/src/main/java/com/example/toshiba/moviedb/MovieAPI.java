@@ -22,6 +22,10 @@ public interface MovieAPI {
                               @Query("sort_by") String sortBy,
                               @Query("page") String page);
 
+    @GET("/3/search/movie")
+    Call<POJOMovie> getMoviesByTitle(@Query("api_key") String apiKey,
+                              @Query("query") String query);
+
     @GET("/3/movie/{movie_id}")
     Call<POJOMovieInfoResult> getMovieDetails(@Path("movie_id") String movie_id,
                                            @Query("api_key") String apiKey);

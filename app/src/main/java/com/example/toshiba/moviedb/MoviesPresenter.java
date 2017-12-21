@@ -26,6 +26,8 @@ public class MoviesPresenter {
     public interface MovieAPIPresenterListener{
         void moviesDataRetrieved(int page, List<String> movieId, List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
         void moviesDataRetrievalFail();
+        void moviesTitleRetrieved(List<String> titles);
+        void moviesTitleRetrievalFail();
     }
 
     public MoviesPresenter(Context context, MovieAPIPresenterListener listener){
@@ -35,13 +37,11 @@ public class MoviesPresenter {
     }
 
     public void getMovies(final int pageCount){
-        Log.d("loveumeg", "getMovies()");
         movieApiService.getAPI().getMovies(
                 movieApiService.getAPIKey(context),  movieApiService.getLanguangeParam(),
                 movieApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
-                Log.d("loveu", "onResponse" + pageCount);
                 List<String> movieIds = new ArrayList<String>();
                 List<String> titles = new ArrayList();
                 List<String> posters = new ArrayList();
@@ -70,7 +70,29 @@ public class MoviesPresenter {
             @Override
             public void onFailure(Call<POJOMovie> call, Throwable t) {
                 listner.moviesDataRetrievalFail();
-                Log.d("blue", "fail ya");
+            }
+        });
+    }
+
+    public void getMoviesByTitle(final String word){
+        movieApiService.getAPI().getMoviesByTitle(movieApiService.getAPIKey(context), word).enqueue(new Callback<POJOMovie>() {
+            @Override
+            public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
+                POJOMovie body = response.body();
+
+                List<String> moviesTitle = new ArrayList<>();
+                if(response.body() != null) {
+                    for (int i = 0; i < body.getResults().size(); i++) {
+                        moviesTitle.add(body.getResults().get(i).getTitle());
+                    }
+                }
+
+                listner.moviesTitleRetrieved(moviesTitle);
+            }
+
+            @Override
+            public void onFailure(Call<POJOMovie> call, Throwable t) {
+                listner.moviesTitleRetrievalFail();
             }
         });
     }

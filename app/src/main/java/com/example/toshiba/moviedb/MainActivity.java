@@ -5,13 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesAdapter;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesListPresenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
@@ -24,7 +33,16 @@ public class MainActivity extends AppCompatActivity implements
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     MoviesAdapter moviesAdapter;
+    AutoCompleteTextView actvSearchBar;
+    ArrayList<String> moviesTitle;
+    ArrayAdapter<String> actvSearchBarAdapter;
+    ProgressBar progressBar;
 
+    public void initViews(){
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        actvSearchBar = (AutoCompleteTextView) findViewById(R.id.actvSearchBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +50,48 @@ public class MainActivity extends AppCompatActivity implements
 
 //        VehicleComponent component = DaggerVehicleComponent.builder().vehicleModule(new VehicleModule()).build();
 //        component.provideVehicle();
-
+        initViews();
 
         moviesListPresenter = new MoviesListPresenter();
         moviesPresenter = new MoviesPresenter(this, this);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         getRecyclerViewData();
 
+        moviesTitle = new ArrayList<>();
+        actvSearchBarAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, moviesTitle);
+        actvSearchBar.setAdapter(actvSearchBarAdapter);
+        actvSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
+                //... your stuff
+            }
+        });
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ///do something
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                progressBar.setVisibility(View.VISIBLE);
+                moviesPresenter.getMoviesByTitle(actvSearchBar.getText().toString());
+            }
+        };
+        actvSearchBar.addTextChangedListener(textWatcher);
+
 
     }
+
+
 
     @Override
     public void getRecyclerViewData() {
@@ -71,8 +121,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void moviesDataRetrievalFail() {
-        Toast.makeText(MainActivity.this, "Failed to retrieve movie data", Toast.LENGTH_LONG);
+        Toast.makeText(MainActivity.this, "Failed to retrieve movie data", Toast.LENGTH_LONG).show();
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void moviesTitleRetrieved(List<String> titles) {
+        progressBar.setVisibility(View.GONE);
+        actvSearchBarAdapter.clear();
+        actvSearchBarAdapter.addAll(titles);
+        actvSearchBarAdapter.getFilter().filter(actvSearchBar.getText().toString(), null);
+    }
+
+    @Override
+    public void moviesTitleRetrievalFail() {
+        Toast.makeText(MainActivity.this, "Failed to search movies, check your internet connection and try again", Toast.LENGTH_LONG).show();
     }
 
 
@@ -101,5 +164,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        KeyboardUtil.hideKeyboard(this);
+    }
 }
