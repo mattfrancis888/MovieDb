@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
+import com.example.toshiba.moviedb.MainActivity;
+import com.example.toshiba.moviedb.Util.KeyboardUtil;
 import com.example.toshiba.moviedb.Util.ProgressDialogUtil;
 import com.example.toshiba.moviedb.R;
 
@@ -20,7 +23,7 @@ import java.util.List;
  * Created by TOSHIBA on 11/12/2017.
  */
 
-public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPresenter.MovieInfoPresenterListener {
+public class MovieInfoActivity extends AppCompatActivity implements MovieInfoView {
     ImageView ivPoster;
     TextView tvTitle;
     TextView tvOverview;
@@ -64,7 +67,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_info);
         progressDialog = ProgressDialogUtil.showProgressDialog(this, "Loading...");
-
+        KeyboardUtil.hideKeyboard(this);
         initViews();
 
         MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this, this);
@@ -77,7 +80,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
 
 
     @Override
-    public void moviesInfoRetrieved(String poster, String title, String description,
+    public void setMovieInfoPage(String poster, String title, String description,
                                     String releaseDate, String status, String runTime,
                                     String revenue, List<String> genres, List<String> castPictures, List<String> castNames) {
         Log.d("blue", "moviesInfoRetrieved " + title);
@@ -108,7 +111,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
     }
 
     @Override
-    public void moviesInfoRetrievalFail() {
-
+    public void showMovieInfoPageError() {
+        Toast.makeText(MovieInfoActivity.this, "Failed to retrieve movie data", Toast.LENGTH_LONG).show();
     }
 }

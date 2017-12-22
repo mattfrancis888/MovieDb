@@ -16,28 +16,20 @@ import retrofit2.Response;
  */
 
 public class MoviesPresenter {
-    MovieAPIService movieApiService;
-    MovieAPIPresenterListener listner;
+    MovieDbAPIService movieDbApiService;
+    MoviesView moviesView;
     Context context;
 
-
-    public interface MovieAPIPresenterListener{
-        void moviesDataRetrieved(int page, List<String> movieId, List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
-        void moviesDataRetrievalFail();
-        void moviesTitleRetrieved(List<String> titles, List<String> movieIds);
-        void moviesTitleRetrievalFail();
-    }
-
-    public MoviesPresenter(Context context, MovieAPIPresenterListener listener){
+    public MoviesPresenter(Context context, MoviesView moviesView){
         this.context = context;
-        this.movieApiService = new MovieAPIService();
-        this.listner = listener;
+        this.movieDbApiService = new MovieDbAPIService();
+        this.moviesView = moviesView;
     }
 
     public void getMovies(final int pageCount){
-        movieApiService.getAPI().getMovies(
-                movieApiService.getAPIKey(context),  movieApiService.getLanguangeParam(),
-                movieApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
+        movieDbApiService.getAPI().getMovies(
+                movieDbApiService.getAPIKey(context),  movieDbApiService.getLanguangeParam(),
+                movieDbApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
                 List<String> movieIds = new ArrayList<>();
@@ -52,28 +44,28 @@ public class MoviesPresenter {
                     for (int i = 0; i < size; i++) {
                         movieIds.add(body.getResults().get(i).getId().toString());
                         titles.add(body.getResults().get(i).getTitle());
-                        posters.add(movieApiService.getStartingImagePath() + body.getResults().get(i).getPosterPath());
+                        posters.add(movieDbApiService.getStartingImagePath() + body.getResults().get(i).getPosterPath());
                         ratings.add(String.valueOf(body.getResults().get(i).getVoteAverage()));
                         descriptions.add(body.getResults().get(i).getOverview());
                     }
 
-                    listner.moviesDataRetrieved(pageCount, movieIds, titles, posters, ratings, descriptions);
+                    moviesView.updateRecyclerViewAdapter(pageCount, movieIds, titles, posters, ratings, descriptions);
 
                 } else {
                     //will be empty
-                    listner.moviesDataRetrieved(pageCount, movieIds, titles, posters, ratings, descriptions);
+                    moviesView.updateRecyclerViewAdapter(pageCount, movieIds, titles, posters, ratings, descriptions);
                 }
             }
 
             @Override
             public void onFailure(Call<POJOMovie> call, Throwable t) {
-                listner.moviesDataRetrievalFail();
+                moviesView.errorInUpdatingRecyclerViewAdapter();
             }
         });
     }
 
     public void getMoviesByTitle(final String word){
-        movieApiService.getAPI().getMoviesByTitle(movieApiService.getAPIKey(context), word).enqueue(new Callback<POJOMovie>() {
+        movieDbApiService.getAPI().getMoviesByTitle(movieDbApiService.getAPIKey(context), word).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
                 POJOMovie body = response.body();
@@ -87,12 +79,12 @@ public class MoviesPresenter {
                     }
                 }
 
-                listner.moviesTitleRetrieved(moviesTitle, movieIds);
+                moviesView.showMovieTitlesInSearchBar(moviesTitle, movieIds);
             }
 
             @Override
             public void onFailure(Call<POJOMovie> call, Throwable t) {
-                listner.moviesTitleRetrievalFail();
+                moviesView.moviesTitleRetrievalFail();
             }
         });
     }

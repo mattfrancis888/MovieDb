@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        MoviesPresenter.MovieAPIPresenterListener {
+       MoviesView {
 
     int pageCount = 1;
     MoviesListPresenter moviesListPresenter;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        KeyboardUtil.hideKeyboard(this);
 //        VehicleComponent component = DaggerVehicleComponent.builder().vehicleModule(new VehicleModule()).build();
 //        component.provideVehicle();
         initViews();
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void moviesDataRetrieved(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
+    public void updateRecyclerViewAdapter(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
                                     List<String> ratings, List<String> descriptions) {
 
         if (pageCount == 1) {
@@ -82,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void moviesDataRetrievalFail() {
+    public void errorInUpdatingRecyclerViewAdapter() {
         Toast.makeText(MainActivity.this, "Failed to retrieve movie data", Toast.LENGTH_LONG).show();
         progressDialog.dismiss();
     }
 
     @Override
-    public void moviesTitleRetrieved(List<String> titles, List<String> movieIds) {
+    public void showMovieTitlesInSearchBar(List<String> titles, List<String> movieIds) {
         progressBar.setVisibility(View.GONE);
         actvSearchBarAdapter.clear();
         actvSearchBarAdapter.addAll(titles);
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements
                 getMovies(pageCount);
     }
 
+    @Override
     public void setUpRecyclerView(RecyclerView recyclerView, final LinearLayoutManager linearLayoutManager) {
         recyclerView.setLayoutManager(linearLayoutManager);
         moviesAdapter = new MoviesAdapter(moviesListPresenter);
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
     public void setUpSearchBar(){
         moviesTitle = new ArrayList<>();
         moviesIds = new ArrayList<>();

@@ -3,8 +3,8 @@ package com.example.toshiba.moviedb.MovieInfo;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.toshiba.moviedb.MovieAPI;
-import com.example.toshiba.moviedb.MovieAPIService;
+import com.example.toshiba.moviedb.MovieDbAPI;
+import com.example.toshiba.moviedb.MovieDbAPIService;
 import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoCastResult;
 import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoResult;
 
@@ -21,42 +21,27 @@ import retrofit2.Response;
  */
 
 public class MovieInfoPresenter {
-    private MovieAPIService movieApiService;
-    private MovieInfoPresenter.MovieInfoPresenterListener listner;
+    private MovieDbAPIService movieDbApiService;
+    private MovieInfoView movieInfoView;
     private Context context;
 
-    public interface MovieInfoPresenterListener {
-        void moviesInfoRetrieved(String poster,
-                                 String title,
-                                 String description,
-                                 String releaseDate,
-                                 String status,
-                                 String runTime,
-                                 String revenue,
-                                 List<String> genres,
-                                 List<String> castPictures,
-                                 List<String> castNames);
 
-
-        void moviesInfoRetrievalFail();
-    }
-
-    public MovieInfoPresenter(Context context, MovieInfoPresenter.MovieInfoPresenterListener listener) {
+    public MovieInfoPresenter(Context context, MovieInfoView movieInfoView) {
         this.context = context;
-        this.movieApiService = new MovieAPIService();
-        this.listner = listener;
+        this.movieDbApiService = new MovieDbAPIService();
+        this.movieInfoView = movieInfoView;
     }
 
     public void getMovieInfo(final String movieId) {
-        final MovieAPI movieAPI = movieApiService.getAPI();
-        final String apiKey = movieApiService.getAPIKey(context);
+        final MovieDbAPI movieDbAPI = movieDbApiService.getAPI();
+        final String apiKey = movieDbApiService.getAPIKey(context);
 
-        movieAPI.getMovieDetails(movieId,
+        movieDbAPI.getMovieDetails(movieId,
                 apiKey ).enqueue(new Callback<POJOMovieInfoResult>() {
             @Override
             public void onResponse(Call<POJOMovieInfoResult> call, Response<POJOMovieInfoResult> response) {
                 POJOMovieInfoResult movieInfoBody = response.body();
-                final String posterPath = movieApiService.getStartingImagePath() + movieInfoBody.getPosterPath();
+                final String posterPath = movieDbApiService.getStartingImagePath() + movieInfoBody.getPosterPath();
                 final String title = movieInfoBody.getTitle();
                 final String description = movieInfoBody.getOverview();
                 final String releaseDate = movieInfoBody.getReleaseDate();
@@ -73,7 +58,7 @@ public class MovieInfoPresenter {
                 }
 
                 //get casts in movie credts
-                movieAPI.getMovieCredits(movieId, apiKey).enqueue(new Callback<POJOMovieInfoCastResult>() {
+                movieDbAPI.getMovieCredits(movieId, apiKey).enqueue(new Callback<POJOMovieInfoCastResult>() {
                     @Override
                     public void onResponse(Call<POJOMovieInfoCastResult> call, Response<POJOMovieInfoCastResult> response) {
                         Log.d("blue", "succ credit");
@@ -82,19 +67,19 @@ public class MovieInfoPresenter {
                         POJOMovieInfoCastResult movieCastBody = response.body();
 
                         for(int i = 0; i < movieCastBody.getMaxCastSize(); i++){
-                            castPictures.add(movieApiService.getStartingImagePath() + movieCastBody.getCast().get(i)
+                            castPictures.add(movieDbApiService.getStartingImagePath() + movieCastBody.getCast().get(i)
                                     .getProfilePath());
                             names.add(movieCastBody.getCast().get(i).getName());
                         }
 
-                        listner.moviesInfoRetrieved(posterPath, title, description,releaseDate,
+                        movieInfoView.setMovieInfoPage(posterPath, title, description,releaseDate,
                                 status, runTimeFormatted, revenue, genres, castPictures, names);
 
                     }
 
                     @Override
                     public void onFailure(Call<POJOMovieInfoCastResult> call, Throwable t) {
-                         listner.moviesInfoRetrievalFail();
+                        movieInfoView.showMovieInfoPageError();
                     }
                 });
 
@@ -104,7 +89,7 @@ public class MovieInfoPresenter {
 
             @Override
             public void onFailure(Call<POJOMovieInfoResult> call, Throwable t) {
-                listner.moviesInfoRetrievalFail();
+                movieInfoView.showMovieInfoPageError();
             }
         });
     }
