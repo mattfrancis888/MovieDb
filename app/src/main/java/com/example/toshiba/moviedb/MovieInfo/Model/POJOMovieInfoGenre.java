@@ -1,4 +1,4 @@
-package com.example.toshiba.moviedb.MovieInfo;
+package com.example.toshiba.moviedb.MovieInfo.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

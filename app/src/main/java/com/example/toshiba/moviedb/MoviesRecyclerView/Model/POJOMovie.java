@@ -1,4 +1,4 @@
-package com.example.toshiba.moviedb.POJOMovieAPI;
+package com.example.toshiba.moviedb.MoviesRecyclerView.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

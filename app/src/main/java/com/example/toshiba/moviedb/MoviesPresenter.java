@@ -1,10 +1,8 @@
 package com.example.toshiba.moviedb;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.example.toshiba.moviedb.POJOMovieAPI.POJOMovie;
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.POJOMovie;
 
 import java.util.ArrayList;
 import java.util.List;

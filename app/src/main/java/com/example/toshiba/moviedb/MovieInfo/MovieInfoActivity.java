@@ -11,16 +11,10 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.example.toshiba.moviedb.MovieAPI;
-import com.example.toshiba.moviedb.MovieAPIService;
-import com.example.toshiba.moviedb.ProgressDialogUtil;
+import com.example.toshiba.moviedb.Util.ProgressDialogUtil;
 import com.example.toshiba.moviedb.R;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by TOSHIBA on 11/12/2017.

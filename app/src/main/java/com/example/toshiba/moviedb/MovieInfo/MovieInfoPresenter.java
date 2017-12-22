@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.example.toshiba.moviedb.MovieAPI;
 import com.example.toshiba.moviedb.MovieAPIService;
-import com.example.toshiba.moviedb.MoviesPresenter;
-import com.example.toshiba.moviedb.POJOMovieAPI.POJOMovie;
+import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoCastResult;
+import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoResult;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import retrofit2.Response;
  */
 
 public class MovieInfoPresenter {
-    MovieAPIService movieApiService;
-    MovieInfoPresenter.MovieInfoPresenterListener listner;
-    Context context;
+    private MovieAPIService movieApiService;
+    private MovieInfoPresenter.MovieInfoPresenterListener listner;
+    private Context context;
 
     public interface MovieInfoPresenterListener {
         void moviesInfoRetrieved(String poster,
@@ -77,8 +77,8 @@ public class MovieInfoPresenter {
                     @Override
                     public void onResponse(Call<POJOMovieInfoCastResult> call, Response<POJOMovieInfoCastResult> response) {
                         Log.d("blue", "succ credit");
-                        List<String> castPictures = new ArrayList<String>();
-                        List<String> names = new ArrayList<String>();
+                        List<String> castPictures = new ArrayList<>();
+                        List<String> names = new ArrayList<>();
                         POJOMovieInfoCastResult movieCastBody = response.body();
 
                         for(int i = 0; i < movieCastBody.getMaxCastSize(); i++){

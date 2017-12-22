@@ -1,8 +1,6 @@
 package com.example.toshiba.moviedb;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -23,12 +20,13 @@ import android.widget.Toast;
 import com.example.toshiba.moviedb.MovieInfo.MovieInfoActivity;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesAdapter;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesListPresenter;
+import com.example.toshiba.moviedb.Util.KeyboardUtil;
+import com.example.toshiba.moviedb.Util.ProgressDialogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        RecyclerViewSetUp,
         MoviesPresenter.MovieAPIPresenterListener {
 
     int pageCount = 1;
@@ -43,13 +41,6 @@ public class MainActivity extends AppCompatActivity implements
     ArrayAdapter<String> actvSearchBarAdapter;
     ProgressBar progressBar;
 
-    public void initViews(){
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        actvSearchBar = (AutoCompleteTextView) findViewById(R.id.actvSearchBar);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,56 +54,12 @@ public class MainActivity extends AppCompatActivity implements
         moviesPresenter = new MoviesPresenter(this, this);
 
         getRecyclerViewData();
+        setUpSearchBar();
 
-        moviesTitle = new ArrayList<>();
-        moviesIds = new ArrayList<>();
-
-        actvSearchBarAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, moviesTitle);
-        actvSearchBar.setAdapter(actvSearchBarAdapter);
-
-        actvSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String)parent.getItemAtPosition(position);
-                moviesPresenter.getMoviesByTitle(selection);
-
-                Intent intent = new Intent(MainActivity.this, MovieInfoActivity.class);
-                intent.putExtra(getResources().getString(R.string.movie_id) , moviesIds.get(position));
-                startActivity(intent);
-            }
-        });
-
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                ///do something
-
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                progressBar.setVisibility(View.VISIBLE);
-                moviesPresenter.getMoviesByTitle(actvSearchBar.getText().toString());
-            }
-        };
-        actvSearchBar.addTextChangedListener(textWatcher);
 
 
     }
 
-
-
-    @Override
-    public void getRecyclerViewData() {
-        moviesPresenter.
-                getMovies(pageCount);
-    }
 
     @Override
     public void moviesDataRetrieved(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
@@ -157,8 +104,23 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(MainActivity.this, "Failed to search movies, check your internet connection and try again", Toast.LENGTH_LONG).show();
     }
 
-
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        KeyboardUtil.hideKeyboard(this);
+    }
+
+    public void initViews(){
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        actvSearchBar = (AutoCompleteTextView) findViewById(R.id.actvSearchBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    public void getRecyclerViewData() {
+        moviesPresenter.
+                getMovies(pageCount);
+    }
+
     public void setUpRecyclerView(RecyclerView recyclerView, final LinearLayoutManager linearLayoutManager) {
         recyclerView.setLayoutManager(linearLayoutManager);
         moviesAdapter = new MoviesAdapter(moviesListPresenter);
@@ -183,9 +145,43 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        KeyboardUtil.hideKeyboard(this);
+    public void setUpSearchBar(){
+        moviesTitle = new ArrayList<>();
+        moviesIds = new ArrayList<>();
+        actvSearchBarAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, moviesTitle);
+        actvSearchBar.setAdapter(actvSearchBarAdapter);
+
+        actvSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String)parent.getItemAtPosition(position);
+                moviesPresenter.getMoviesByTitle(selection);
+
+                Intent intent = new Intent(MainActivity.this, MovieInfoActivity.class);
+                intent.putExtra(getResources().getString(R.string.movie_id) , moviesIds.get(position));
+                startActivity(intent);
+            }
+        });
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ///do something
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                progressBar.setVisibility(View.VISIBLE);
+                moviesPresenter.getMoviesByTitle(actvSearchBar.getText().toString());
+            }
+        };
+        actvSearchBar.addTextChangedListener(textWatcher);
     }
 }

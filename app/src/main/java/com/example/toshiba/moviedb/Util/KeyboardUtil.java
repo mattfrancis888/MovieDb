@@ -1,4 +1,4 @@
-package com.example.toshiba.moviedb;
+package com.example.toshiba.moviedb.Util;
 
 import android.app.Activity;
 import android.content.Context;

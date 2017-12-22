@@ -1,10 +1,8 @@
 package com.example.toshiba.moviedb;
 
-import com.example.toshiba.moviedb.MovieInfo.POJOMovieInfoCast;
-import com.example.toshiba.moviedb.MovieInfo.POJOMovieInfoCastResult;
-import com.example.toshiba.moviedb.MovieInfo.POJOMovieInfoResult;
-import com.example.toshiba.moviedb.POJOMovieAPI.POJOMovie;
-import com.example.toshiba.moviedb.POJOMovieAPI.POJOMovieResult;
+import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoCastResult;
+import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoResult;
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.POJOMovie;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
