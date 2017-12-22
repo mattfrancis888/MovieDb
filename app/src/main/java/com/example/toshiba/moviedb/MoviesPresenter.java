@@ -26,7 +26,7 @@ public class MoviesPresenter {
     public interface MovieAPIPresenterListener{
         void moviesDataRetrieved(int page, List<String> movieId, List<String> titles, List<String> posters, List<String> ratings, List<String> descriptions);
         void moviesDataRetrievalFail();
-        void moviesTitleRetrieved(List<String> titles);
+        void moviesTitleRetrieved(List<String> titles, List<String> movieIds);
         void moviesTitleRetrievalFail();
     }
 
@@ -42,7 +42,7 @@ public class MoviesPresenter {
                 movieApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
-                List<String> movieIds = new ArrayList<String>();
+                List<String> movieIds = new ArrayList<>();
                 List<String> titles = new ArrayList();
                 List<String> posters = new ArrayList();
                 List<String> ratings  = new ArrayList();
@@ -81,13 +81,15 @@ public class MoviesPresenter {
                 POJOMovie body = response.body();
 
                 List<String> moviesTitle = new ArrayList<>();
+                List<String> movieIds = new ArrayList<>();
                 if(response.body() != null) {
                     for (int i = 0; i < body.getResults().size(); i++) {
                         moviesTitle.add(body.getResults().get(i).getTitle());
+                        movieIds.add(body.getResults().get(i).getId().toString());
                     }
                 }
 
-                listner.moviesTitleRetrieved(moviesTitle);
+                listner.moviesTitleRetrieved(moviesTitle, movieIds);
             }
 
             @Override

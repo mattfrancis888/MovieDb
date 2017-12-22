@@ -1,6 +1,9 @@
 package com.example.toshiba.moviedb;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import com.example.toshiba.moviedb.MovieInfo.MovieInfoActivity;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesAdapter;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesListPresenter;
 
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
     MoviesAdapter moviesAdapter;
     AutoCompleteTextView actvSearchBar;
     ArrayList<String> moviesTitle;
+    ArrayList<String> moviesIds;
     ArrayAdapter<String> actvSearchBarAdapter;
     ProgressBar progressBar;
 
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements
         actvSearchBar = (AutoCompleteTextView) findViewById(R.id.actvSearchBar);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +65,20 @@ public class MainActivity extends AppCompatActivity implements
         getRecyclerViewData();
 
         moviesTitle = new ArrayList<>();
+        moviesIds = new ArrayList<>();
+
         actvSearchBarAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, moviesTitle);
         actvSearchBar.setAdapter(actvSearchBarAdapter);
+
         actvSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-                //... your stuff
+                String selection = (String)parent.getItemAtPosition(position);
+                moviesPresenter.getMoviesByTitle(selection);
+
+                Intent intent = new Intent(MainActivity.this, MovieInfoActivity.class);
+                intent.putExtra(getResources().getString(R.string.movie_id) , moviesIds.get(position));
+                startActivity(intent);
             }
         });
 
@@ -126,11 +141,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void moviesTitleRetrieved(List<String> titles) {
+    public void moviesTitleRetrieved(List<String> titles, List<String> movieIds) {
         progressBar.setVisibility(View.GONE);
         actvSearchBarAdapter.clear();
         actvSearchBarAdapter.addAll(titles);
         actvSearchBarAdapter.getFilter().filter(actvSearchBar.getText().toString(), null);
+
+        //movie ids
+        moviesIds.clear();
+        moviesIds.addAll(movieIds);
     }
 
     @Override

@@ -43,7 +43,7 @@ public class HolderMoviesView extends RecyclerView.ViewHolder implements Interfa
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(itemView.getContext(), MovieInfoActivity.class);
-                intent.putExtra("MOVIE_ID" ,movieId);
+                intent.putExtra(itemView.getContext().getResources().getString(R.string.movie_id) ,movieId);
                 ((Activity) itemView.getContext()).startActivity(intent);
 
             }

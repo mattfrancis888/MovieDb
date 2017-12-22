@@ -75,7 +75,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoPre
 
         MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this, this);
 //        movieInfoPresenter.getMovieInfo("346364");
-        movieInfoPresenter.getMovieInfo(getIntent().getStringExtra("MOVIE_ID"));
+        movieInfoPresenter.getMovieInfo(getIntent().getStringExtra(getResources().getString(R.string.movie_id)));
 
 
     }
