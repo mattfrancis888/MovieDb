@@ -10,12 +10,9 @@ import java.util.List;
  */
 
 public interface MoviesView {
-    void setUpRecyclerView(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager);
     void updateRecyclerViewAdapter(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
                                    List<String> ratings, List<String> descriptions);
     void errorInUpdatingRecyclerViewAdapter();
-
-    void setUpSearchBar();
     void showMovieTitlesInSearchBar(List<String> titles, List<String> movieIds);
     void moviesTitleRetrievalFail();
 }

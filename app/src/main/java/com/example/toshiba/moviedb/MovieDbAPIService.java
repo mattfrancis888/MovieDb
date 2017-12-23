@@ -16,6 +16,9 @@ public class MovieDbAPIService {
     private final String sortBy = "popularity.desc";
     private final String pageCount = "1";
     private final String startingImagePath = "http://image.tmdb.org/t/p/w500/";
+
+    //API Key does not to be hidden
+    private final String API_KEY = "267f6c03dccb4096c3b41afeb9ac7d26";
     public MovieDbAPI getAPI(){
         Retrofit retrofit = new Retrofit
                 .Builder()
@@ -25,8 +28,8 @@ public class MovieDbAPIService {
         return retrofit.create(MovieDbAPI.class);
     }
 
-    public String getAPIKey(Context context) {
-        return context.getResources().getString(R.string.api_key);
+    public String getAPIKey() {
+        return API_KEY;
     }
     //need this path in the beggining to show a picture
     public String getStartingImagePath(){

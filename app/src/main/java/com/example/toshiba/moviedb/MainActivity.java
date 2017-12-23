@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements
         initViews();
 
         moviesListPresenter = new MoviesListPresenter();
-        moviesPresenter = new MoviesPresenter(this, this);
+        moviesPresenter = new MoviesPresenter(this);
 
         getRecyclerViewData();
         setUpSearchBar();
@@ -121,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements
                 getMovies(pageCount);
     }
 
-    @Override
-    public void setUpRecyclerView(RecyclerView recyclerView, final LinearLayoutManager linearLayoutManager) {
+
+    public void setUpRecyclerView(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager){
         recyclerView.setLayoutManager(linearLayoutManager);
         moviesAdapter = new MoviesAdapter(moviesListPresenter);
         recyclerView.setAdapter(moviesAdapter);
@@ -143,10 +143,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
-
     }
-
-    @Override
     public void setUpSearchBar(){
         moviesTitle = new ArrayList<>();
         moviesIds = new ArrayList<>();

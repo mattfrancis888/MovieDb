@@ -70,7 +70,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoVie
         KeyboardUtil.hideKeyboard(this);
         initViews();
 
-        MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this, this);
+        MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this);
 //        movieInfoPresenter.getMovieInfo("346364");
         movieInfoPresenter.getMovieInfo(getIntent().getStringExtra(getResources().getString(R.string.movie_id)));
 

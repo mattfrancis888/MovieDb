@@ -18,17 +18,17 @@ import retrofit2.Response;
 public class MoviesPresenter {
     MovieDbAPIService movieDbApiService;
     MoviesView moviesView;
-    Context context;
 
-    public MoviesPresenter(Context context, MoviesView moviesView){
-        this.context = context;
+    public MoviesPresenter(MoviesView moviesView){
         this.movieDbApiService = new MovieDbAPIService();
         this.moviesView = moviesView;
     }
 
+
+
     public void getMovies(final int pageCount){
         movieDbApiService.getAPI().getMovies(
-                movieDbApiService.getAPIKey(context),  movieDbApiService.getLanguangeParam(),
+                movieDbApiService.getAPIKey(),  movieDbApiService.getLanguangeParam(),
                 movieDbApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
@@ -65,7 +65,7 @@ public class MoviesPresenter {
     }
 
     public void getMoviesByTitle(final String word){
-        movieDbApiService.getAPI().getMoviesByTitle(movieDbApiService.getAPIKey(context), word).enqueue(new Callback<POJOMovie>() {
+        movieDbApiService.getAPI().getMoviesByTitle(movieDbApiService.getAPIKey(), word).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
                 POJOMovie body = response.body();

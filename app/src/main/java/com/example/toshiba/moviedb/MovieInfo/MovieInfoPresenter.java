@@ -23,18 +23,16 @@ import retrofit2.Response;
 public class MovieInfoPresenter {
     private MovieDbAPIService movieDbApiService;
     private MovieInfoView movieInfoView;
-    private Context context;
 
 
-    public MovieInfoPresenter(Context context, MovieInfoView movieInfoView) {
-        this.context = context;
+    public MovieInfoPresenter(MovieInfoView movieInfoView) {
         this.movieDbApiService = new MovieDbAPIService();
         this.movieInfoView = movieInfoView;
     }
 
     public void getMovieInfo(final String movieId) {
         final MovieDbAPI movieDbAPI = movieDbApiService.getAPI();
-        final String apiKey = movieDbApiService.getAPIKey(context);
+        final String apiKey = movieDbApiService.getAPIKey();
 
         movieDbAPI.getMovieDetails(movieId,
                 apiKey ).enqueue(new Callback<POJOMovieInfoResult>() {
