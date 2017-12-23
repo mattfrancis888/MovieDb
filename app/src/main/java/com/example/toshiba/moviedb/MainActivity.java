@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 
 import com.example.toshiba.moviedb.MovieInfo.MovieInfoActivity;
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.Movie;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesAdapter;
 import com.example.toshiba.moviedb.MoviesRecyclerView.MoviesListPresenter;
 import com.example.toshiba.moviedb.Util.KeyboardUtil;
@@ -62,18 +63,18 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    public void updateRecyclerViewAdapter(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
-                                    List<String> ratings, List<String> descriptions) {
+    public void updateRecyclerViewAdapter(int pageCount, List<Movie> movies) {
 
         if (pageCount == 1) {
-            moviesListPresenter.setData(movieIds, movies, posters, ratings, descriptions);
+            moviesListPresenter.updateData(movies);
             setUpRecyclerView(
                     recyclerView,
                     new LinearLayoutManager(this)
             );
         } else {
             int lastItemSize = moviesListPresenter.getMoviesSize();
-            moviesListPresenter.addData(movieIds, movies, posters, ratings, descriptions);
+//            moviesListPresenter.addData(movieIds, movies, posters, ratings, descriptions);
+            moviesListPresenter.updateData( movies);
             int newItemSize = moviesListPresenter.getMoviesSize();
             moviesAdapter.notifyItemRangeInserted(lastItemSize, newItemSize);
             progressDialog.dismiss();

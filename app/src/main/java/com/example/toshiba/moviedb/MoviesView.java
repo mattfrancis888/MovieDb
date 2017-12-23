@@ -1,7 +1,6 @@
 package com.example.toshiba.moviedb;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.Movie;
 
 import java.util.List;
 
@@ -10,8 +9,7 @@ import java.util.List;
  */
 
 public interface MoviesView {
-    void updateRecyclerViewAdapter(int pageCount, List<String> movieIds, List<String> movies, List<String> posters,
-                                   List<String> ratings, List<String> descriptions);
+    void updateRecyclerViewAdapter(int pageCount,List<Movie> movies);
     void errorInUpdatingRecyclerViewAdapter();
     void showMovieTitlesInSearchBar(List<String> titles, List<String> movieIds);
     void moviesTitleRetrievalFail();

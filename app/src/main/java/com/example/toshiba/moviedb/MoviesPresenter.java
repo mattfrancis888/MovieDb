@@ -1,7 +1,6 @@
 package com.example.toshiba.moviedb;
 
-import android.content.Context;
-
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.Movie;
 import com.example.toshiba.moviedb.MoviesRecyclerView.Model.POJOMovie;
 
 import java.util.ArrayList;
@@ -32,28 +31,28 @@ public class MoviesPresenter {
                 movieDbApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
-                List<String> movieIds = new ArrayList<>();
-                List<String> titles = new ArrayList();
-                List<String> posters = new ArrayList();
-                List<String> ratings  = new ArrayList();
-                List<String> descriptions  = new ArrayList();
+                List<Movie> movies = new ArrayList();
+
                 POJOMovie body = response.body();
                 if(pageCount <= body.getTotalPages()) {
                     int size = body.getResults().size();
 
                     for (int i = 0; i < size; i++) {
-                        movieIds.add(body.getResults().get(i).getId().toString());
-                        titles.add(body.getResults().get(i).getTitle());
-                        posters.add(movieDbApiService.getStartingImagePath() + body.getResults().get(i).getPosterPath());
-                        ratings.add(String.valueOf(body.getResults().get(i).getVoteAverage()));
-                        descriptions.add(body.getResults().get(i).getOverview());
+                        String moveId = body.getResults().get(i).getId().toString();
+                        String title = body.getResults().get(i).getTitle();
+                        String poster = movieDbApiService.getStartingImagePath() + body.getResults().get(i).getPosterPath();
+                        String rating = String.valueOf(body.getResults().get(i).getVoteAverage());
+                        String description = body.getResults().get(i).getOverview();
+                        movies.add(new Movie(moveId, title, poster, rating, description));
+
+
                     }
 
-                    moviesView.updateRecyclerViewAdapter(pageCount, movieIds, titles, posters, ratings, descriptions);
+                    moviesView.updateRecyclerViewAdapter(pageCount, movies);
 
                 } else {
                     //will be empty
-                    moviesView.updateRecyclerViewAdapter(pageCount, movieIds, titles, posters, ratings, descriptions);
+                    moviesView.updateRecyclerViewAdapter(pageCount, movies);
                 }
             }
 

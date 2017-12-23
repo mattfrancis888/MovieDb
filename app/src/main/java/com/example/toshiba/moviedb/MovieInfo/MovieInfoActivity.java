@@ -98,7 +98,7 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoVie
 
         tvStatus.setText(status);
         tvRunTime.setText(runTime);
-        tvRevenue.setText(revenue);
+        tvRevenue.setText("$" + revenue);
 
         Log.d("blue", castPictures.get(0));
         Glide.with(this).load(castPictures.get(0)).into(ivCast1);

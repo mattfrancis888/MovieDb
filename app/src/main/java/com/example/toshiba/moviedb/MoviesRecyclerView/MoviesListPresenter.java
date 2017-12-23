@@ -1,6 +1,6 @@
 package com.example.toshiba.moviedb.MoviesRecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.example.toshiba.moviedb.MoviesRecyclerView.Model.Movie;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,34 +10,28 @@ import java.util.List;
  */
 
 public class MoviesListPresenter {
-    private List<String> movieIds;
-    private List<String> titles;
-    private List<String> images;
-    private List<String> ratings;
-    private List<String> descriptions;
+    private List<String> movieIds = new ArrayList<>();
+    private List<String> titles = new ArrayList<>();
+    private List<String> posters = new ArrayList<>();
+    private List<String> ratings = new ArrayList<>();
+    private List<String> descriptions = new ArrayList<>();
 
-    public void setData(List<String> movieIds, List<String> titles, List<String> images, List<String> ratings, List<String> descriptions) {
-        this.movieIds = movieIds;
-        this.titles = titles;
-        this.images = images;
-        this.ratings = ratings;
-        this.descriptions = descriptions;
 
+    public void updateData(List<Movie> movies) {
+        for(Movie movie : movies){
+            movieIds.add(movie.getMovieId());
+            titles.add(movie.getTitle());
+            posters.add(movie.getPoster());
+            ratings.add(movie.getRating());
+            descriptions.add(movie.getDescriptions());
+        }
     }
 
-    public void addData(List<String> movieIds, List<String> titles, List<String> images, List<String> ratings, List<String> descriptions) {
-        this.movieIds.addAll(movieIds);
-        this.titles.addAll(titles);
-        this.images.addAll(images);
-        this.ratings.addAll(ratings);
-        this.descriptions.addAll(descriptions);
-
-    }
 
     public void onBindAtPosition(InterfaceMoviesView interfaceMoviesView, int position) {
         interfaceMoviesView.movieLayoutClicked(movieIds.get(position));
         interfaceMoviesView.setTitle(titles.get(position));
-        interfaceMoviesView.setPoster(images.get(position));
+        interfaceMoviesView.setPoster(posters.get(position));
         interfaceMoviesView.setRating(ratings.get(position));
         interfaceMoviesView.setDescription(descriptions.get(position));
 
