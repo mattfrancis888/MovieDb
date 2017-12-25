@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-       MoviesView {
+        MoviesView {
 
     int pageCount = 1;
     MoviesListPresenter moviesListPresenter;
@@ -41,25 +41,38 @@ public class MainActivity extends AppCompatActivity implements
     ArrayList<String> moviesIds;
     ArrayAdapter<String> actvSearchBarAdapter;
     ProgressBar progressBar;
-
+    String hi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         KeyboardUtil.hideKeyboard(this);
-//        VehicleComponent component = DaggerVehicleComponent.builder().vehicleModule(new VehicleModule()).build();
-//        component.provideVehicle();
+
         initViews();
 
         moviesListPresenter = new MoviesListPresenter();
-        moviesPresenter = new MoviesPresenter(this);
+        moviesPresenter = new MoviesPresenter();
 
         getRecyclerViewData();
         setUpSearchBar();
-
-
+        Log.d("loveu", "onCreate");
+        hi = "hi";
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        moviesPresenter.attachView(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        moviesPresenter.detachView();
+    }
+
 
 
     @Override
@@ -74,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             int lastItemSize = moviesListPresenter.getMoviesSize();
 //            moviesListPresenter.addData(movieIds, movies, posters, ratings, descriptions);
-            moviesListPresenter.updateData( movies);
+            moviesListPresenter.updateData(movies);
             int newItemSize = moviesListPresenter.getMoviesSize();
             moviesAdapter.notifyItemRangeInserted(lastItemSize, newItemSize);
             progressDialog.dismiss();
@@ -111,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements
         KeyboardUtil.hideKeyboard(this);
     }
 
-    public void initViews(){
+    public void initViews() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         actvSearchBar = (AutoCompleteTextView) findViewById(R.id.actvSearchBar);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -123,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    public void setUpRecyclerView(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager){
+    public void setUpRecyclerView(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager) {
         recyclerView.setLayoutManager(linearLayoutManager);
         moviesAdapter = new MoviesAdapter(moviesListPresenter);
         recyclerView.setAdapter(moviesAdapter);
@@ -145,7 +158,8 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
     }
-    public void setUpSearchBar(){
+
+    public void setUpSearchBar() {
         moviesTitle = new ArrayList<>();
         moviesIds = new ArrayList<>();
         actvSearchBarAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, moviesTitle);
@@ -153,12 +167,12 @@ public class MainActivity extends AppCompatActivity implements
 
         actvSearchBar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String)parent.getItemAtPosition(position);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String) parent.getItemAtPosition(position);
                 moviesPresenter.getMoviesByTitle(selection);
 
                 Intent intent = new Intent(MainActivity.this, MovieInfoActivity.class);
-                intent.putExtra(getResources().getString(R.string.movie_id) , moviesIds.get(position));
+                intent.putExtra(getResources().getString(R.string.movie_id), moviesIds.get(position));
                 startActivity(intent);
             }
         });
@@ -184,4 +198,5 @@ public class MainActivity extends AppCompatActivity implements
         };
         actvSearchBar.addTextChangedListener(textWatcher);
     }
+
 }

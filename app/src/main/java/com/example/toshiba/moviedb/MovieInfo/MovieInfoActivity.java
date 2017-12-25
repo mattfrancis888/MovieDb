@@ -24,6 +24,7 @@ import java.util.List;
  */
 
 public class MovieInfoActivity extends AppCompatActivity implements MovieInfoView {
+    MovieInfoPresenter movieInfoPresenter;
     ImageView ivPoster;
     TextView tvTitle;
     TextView tvOverview;
@@ -70,11 +71,23 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoVie
         KeyboardUtil.hideKeyboard(this);
         initViews();
 
-        MovieInfoPresenter movieInfoPresenter = new MovieInfoPresenter(this);
+        movieInfoPresenter = new MovieInfoPresenter();
 //        movieInfoPresenter.getMovieInfo("346364");
         movieInfoPresenter.getMovieInfo(getIntent().getStringExtra(getResources().getString(R.string.movie_id)));
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        movieInfoPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        movieInfoPresenter.detachView();
     }
 
 
@@ -114,4 +127,6 @@ public class MovieInfoActivity extends AppCompatActivity implements MovieInfoVie
     public void showMovieInfoPageError() {
         Toast.makeText(MovieInfoActivity.this, "Failed to retrieve movie data", Toast.LENGTH_LONG).show();
     }
+
+
 }

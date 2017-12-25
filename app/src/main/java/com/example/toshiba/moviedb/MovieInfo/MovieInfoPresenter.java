@@ -7,6 +7,7 @@ import com.example.toshiba.moviedb.MovieDbAPI;
 import com.example.toshiba.moviedb.MovieDbAPIService;
 import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoCastResult;
 import com.example.toshiba.moviedb.MovieInfo.Model.POJOMovieInfoResult;
+import com.example.toshiba.moviedb.MoviesView;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -21,14 +22,8 @@ import retrofit2.Response;
  */
 
 public class MovieInfoPresenter {
-    private MovieDbAPIService movieDbApiService;
+    private MovieDbAPIService movieDbApiService = new MovieDbAPIService();
     private MovieInfoView movieInfoView;
-
-
-    public MovieInfoPresenter(MovieInfoView movieInfoView) {
-        this.movieDbApiService = new MovieDbAPIService();
-        this.movieInfoView = movieInfoView;
-    }
 
     public void getMovieInfo(final String movieId) {
         final MovieDbAPI movieDbAPI = movieDbApiService.getAPI();
@@ -69,15 +64,18 @@ public class MovieInfoPresenter {
                                     .getProfilePath());
                             names.add(movieCastBody.getCast().get(i).getName());
                         }
-
-                        movieInfoView.setMovieInfoPage(posterPath, title, description,releaseDate,
-                                status, runTimeFormatted, revenue, genres, castPictures, names);
+                        if(movieInfoView != null) {
+                            movieInfoView.setMovieInfoPage(posterPath, title, description, releaseDate,
+                                    status, runTimeFormatted, revenue, genres, castPictures, names);
+                        }
 
                     }
 
                     @Override
                     public void onFailure(Call<POJOMovieInfoCastResult> call, Throwable t) {
-                        movieInfoView.showMovieInfoPageError();
+                        if(movieInfoView != null) {
+                            movieInfoView.showMovieInfoPageError();
+                        }
                     }
                 });
 
@@ -87,8 +85,20 @@ public class MovieInfoPresenter {
 
             @Override
             public void onFailure(Call<POJOMovieInfoResult> call, Throwable t) {
-                movieInfoView.showMovieInfoPageError();
+                if(movieInfoView != null) {
+                    movieInfoView.showMovieInfoPageError();
+                }
             }
         });
     }
+
+    public void attachView(MovieInfoView movieInfoView) {
+        this.movieInfoView = movieInfoView;
+    }
+
+
+    public void detachView() {
+        movieInfoView = null;
+    }
+
 }

@@ -6,6 +6,8 @@ import com.example.toshiba.moviedb.MoviesRecyclerView.Model.POJOMovie;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -15,26 +17,19 @@ import retrofit2.Response;
  */
 
 public class MoviesPresenter {
-    MovieDbAPIService movieDbApiService;
-    MoviesView moviesView;
+    private MovieDbAPIService movieDbApiService = new MovieDbAPIService();
+    private MoviesView moviesView;
 
-    public MoviesPresenter(MoviesView moviesView){
-        this.movieDbApiService = new MovieDbAPIService();
-        this.moviesView = moviesView;
-    }
-
-
-
-    public void getMovies(final int pageCount){
+    public void getMovies(final int pageCount) {
         movieDbApiService.getAPI().getMovies(
-                movieDbApiService.getAPIKey(),  movieDbApiService.getLanguangeParam(),
+                movieDbApiService.getAPIKey(), movieDbApiService.getLanguangeParam(),
                 movieDbApiService.getSortBy(), String.valueOf(pageCount)).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
                 List<Movie> movies = new ArrayList();
 
                 POJOMovie body = response.body();
-                if(pageCount <= body.getTotalPages()) {
+                if (pageCount <= body.getTotalPages()) {
                     int size = body.getResults().size();
 
                     for (int i = 0; i < size; i++) {
@@ -48,10 +43,9 @@ public class MoviesPresenter {
 
                     }
 
-                    moviesView.updateRecyclerViewAdapter(pageCount, movies);
+                }
 
-                } else {
-                    //will be empty
+                if (moviesView != null) {
                     moviesView.updateRecyclerViewAdapter(pageCount, movies);
                 }
             }
@@ -63,7 +57,7 @@ public class MoviesPresenter {
         });
     }
 
-    public void getMoviesByTitle(final String word){
+    public void getMoviesByTitle(final String word) {
         movieDbApiService.getAPI().getMoviesByTitle(movieDbApiService.getAPIKey(), word).enqueue(new Callback<POJOMovie>() {
             @Override
             public void onResponse(Call<POJOMovie> call, Response<POJOMovie> response) {
@@ -71,21 +65,33 @@ public class MoviesPresenter {
 
                 List<String> moviesTitle = new ArrayList<>();
                 List<String> movieIds = new ArrayList<>();
-                if(response.body() != null) {
+                if (response.body() != null) {
                     for (int i = 0; i < body.getResults().size(); i++) {
                         moviesTitle.add(body.getResults().get(i).getTitle());
                         movieIds.add(body.getResults().get(i).getId().toString());
                     }
                 }
-
-                moviesView.showMovieTitlesInSearchBar(moviesTitle, movieIds);
+                if (moviesView != null) {
+                    moviesView.showMovieTitlesInSearchBar(moviesTitle, movieIds);
+                }
             }
 
             @Override
             public void onFailure(Call<POJOMovie> call, Throwable t) {
-                moviesView.moviesTitleRetrievalFail();
+                if (moviesView != null) {
+                    moviesView.moviesTitleRetrievalFail();
+                }
             }
         });
     }
 
+
+    public void attachView(MoviesView moviesView) {
+        this.moviesView = moviesView;
+    }
+
+
+    public void detachView() {
+        moviesView = null;
+    }
 }
